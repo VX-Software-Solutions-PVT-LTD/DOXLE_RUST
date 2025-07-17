@@ -9,6 +9,7 @@ pub fn FileItemComponent(
     on_video_click: EventHandler<String>,
     on_pdf_click: EventHandler<String>,
     icon: Asset,
+        on_image_click:EventHandler<String>,
 ) -> Element {
     let item_name = item.name.clone();
     let item_id = item.id;
@@ -19,6 +20,7 @@ pub fn FileItemComponent(
             FileType::Folder => on_folder_click.call(item_id),
             FileType::Video => on_video_click.call(item_name.clone()),
             FileType::PDF => on_pdf_click.call(item_name.clone()),
+             FileType::Photo => on_image_click.call(item_name.clone()),
             _ => {},
         }
     };
@@ -31,8 +33,8 @@ pub fn FileItemComponent(
                 onclick: handle_click,
                 cursor: if matches!(item.file_type, FileType::Folder | FileType::Video | FileType::PDF) { "pointer" } else { "default" },
                 div {
-                    class: "w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center",
-                    img { src: "{icon}", class: "w-6 h-6" }
+                    class: "w-10 h-10 rounded-lg flex items-center justify-center",
+                    img { src: "{icon}", class: "w-10 h-10" }
                 }
                 div {
                     span {
