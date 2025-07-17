@@ -2,23 +2,43 @@ use dioxus::prelude::*;
 use crate::Components::file_types::{FileItem, FileType};
 
 #[component]
-pub fn FileItemComponent(item: FileItem, on_delete: EventHandler<u32>, icon: Asset) -> Element {
-    let text = match item.file_type {
-        FileType::Photo => "Photo",
-        FileType::File => "File",
-        FileType::Folder => "Folder",
+pub fn FileItemComponent(
+    item: FileItem,
+    on_delete: EventHandler<u32>,
+    on_folder_click: EventHandler<u32>,
+    on_video_click: EventHandler<String>,
+    on_pdf_click: EventHandler<String>,
+    icon: Asset,
+) -> Element {
+    let item_name = item.name.clone();
+    let item_id = item.id;
+    let item_type = item.file_type.clone();
+
+    let handle_click = move |_| {
+        match item_type {
+            FileType::Folder => on_folder_click.call(item_id),
+            FileType::Video => on_video_click.call(item_name.clone()),
+            FileType::PDF => on_pdf_click.call(item_name.clone()),
+            _ => {},
+        }
     };
 
     rsx! {
         div {
-            class: "flex items-center justify-between p-4 bg-white rounded-lg mb-2",
+            class: "flex items-center justify-between p-4 bg-white rounded-lg mb-2 shadow-sm",
             div {
-                class: "flex items-center space-x-3",
-                img { src: "{icon}", class: "w-10 h-10 object-contain" }
-                span {
-                    class: "text-lg text-gray-900 font-normal",
-                    style: "font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;",
-                    "{item.name}"
+                class: "flex items-center space-x-3 flex-1",
+                onclick: handle_click,
+                cursor: if matches!(item.file_type, FileType::Folder | FileType::Video | FileType::PDF) { "pointer" } else { "default" },
+                div {
+                    class: "w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center",
+                    img { src: "{icon}", class: "w-6 h-6" }
+                }
+                div {
+                    span {
+                        class: "text-sm text-gray-600",
+                        "{item.name}"
+                    }
                 }
             }
             button {
