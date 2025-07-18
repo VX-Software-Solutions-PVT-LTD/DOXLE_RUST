@@ -8,6 +8,7 @@ pub fn FileItemComponent(
     on_folder_click: EventHandler<u32>,
     on_video_click: EventHandler<String>,
     on_pdf_click: EventHandler<String>,
+    on_canvas_click: EventHandler<String>,
     icon: Asset,
         on_image_click:EventHandler<String>,
 ) -> Element {
@@ -21,6 +22,8 @@ pub fn FileItemComponent(
             FileType::Video => on_video_click.call(item_name.clone()),
             FileType::PDF => on_pdf_click.call(item_name.clone()),
              FileType::Photo => on_image_click.call(item_name.clone()),
+                         FileType::Canvas => on_canvas_click.call(item_name.clone()), // Add this line
+
             _ => {},
         }
     };

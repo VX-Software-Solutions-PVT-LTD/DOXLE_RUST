@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="out">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/target/dx/doxle/debug/android/app/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/d79aa538edb6058594ac413875b58d0aea850f6db7c9925889c3f48af5816fdd_0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/dx/doxle/debug/android/app/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/d79aa538edb6058594ac413875b58d0aea850f6db7c9925889c3f48af5816fdd_1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/dx/doxle/debug/android/app/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/d79aa538edb6058594ac413875b58d0aea850f6db7c9925889c3f48af5816fdd_4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/dx/doxle/debug/android/app/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/d79aa538edb6058594ac413875b58d0aea850f6db7c9925889c3f48af5816fdd_3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/dx/doxle/debug/android/app/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/d79aa538edb6058594ac413875b58d0aea850f6db7c9925889c3f48af5816fdd_2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/dx/doxle/debug/android/app/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/d79aa538edb6058594ac413875b58d0aea850f6db7c9925889c3f48af5816fdd_5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

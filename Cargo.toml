@@ -4,18 +4,27 @@ version = "0.1.0"
 authors = ["Yashvardhandhondge <yashvardhandhondge@gmail.com>"]
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-dioxus = { version = "0.6.0", features = ["router", "fullstack"] }
+base64 = "0.22.1"
+dioxus = { version = "0.6.0", features = ["router", "fullstack", "web"] }
+dioxus-web = "0.6.0"
+gloo-timers = { version = "0.3", features = ["futures"] }
+wasm-bindgen = "0.2"
+
+# Skia for native targets only
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+skia-safe = "0.67.0"
+
+# Web-specific dependencies
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+web-sys = "0.3"
+js-sys = "0.3"
 
 [features]
-default = ["mobile"]
+default = ["web"]
 web = ["dioxus/web"]
 desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
-
-[profile]
 
 [profile.wasm-dev]
 inherits = "dev"

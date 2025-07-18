@@ -1,8 +1,8 @@
-use dioxus::prelude::*;
 mod Components;
+mod router;
 
-use crate::Components::nav::Nav;
-use crate::Components::home::Home;
+use dioxus::prelude::*;
+use router::Route;
 
 fn main() {
     launch(App);
@@ -16,11 +16,4 @@ fn App() -> Element {
         }
         Router::<Route> {}
     )
-}
-
-#[derive(Clone, PartialEq, Routable)]
-enum Route {
-    #[layout(Nav)]
-    #[route("/")]
-    Home {},
 }

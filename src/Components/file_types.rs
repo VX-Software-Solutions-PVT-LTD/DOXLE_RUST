@@ -5,6 +5,7 @@ pub enum FileType {
     Folder,
     Video,
     PDF,
+    Canvas,
 }
 
 #[derive(Clone, PartialEq, Debug)]
