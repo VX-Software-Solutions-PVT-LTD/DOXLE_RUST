@@ -382,16 +382,16 @@ if let Some(canvas_name) = selected_canvas.read().as_ref() {
             class: "bg-white rounded-lg border-2 border-gray-300 p-4",
             style: "width: 100%; height: 300px;",
             
-            // Simple drawing area with click feedback
+            // Drawing area with image background
             div {
-                style: "width: 100%; height: 100%; background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px; cursor: crosshair; border-radius: 8px; position: relative;",
+                style: "width: 100%; height: 100%; background-image: url('{IMAGE}'); background-size: cover; background-position: center; background-repeat: no-repeat; cursor: crosshair; border-radius: 8px; position: relative;",
                 onclick: move |evt: Event<MouseData>| {
                     // Simple click drawing - add a dot where clicked
                     let coords = evt.element_coordinates();
                     let drawing_path = DrawingPath {
                         points: vec![(coords.x as f32, coords.y as f32), (coords.x as f32 + 1.0, coords.y as f32 + 1.0)],
-                        color: "#ef4444".to_string(),
-                        width: 8.0,
+                        color: "#ff0000".to_string(), // Red dots for better visibility on image
+                        width: 10.0,
                     };
                     let mut paths = drawing_paths.write();
                     paths.push(drawing_path);
@@ -402,7 +402,7 @@ if let Some(canvas_name) = selected_canvas.read().as_ref() {
                     if let Some(point) = path.points.first() {
                         div {
                             key: "{i}",
-                            style: "position: absolute; left: {point.0}px; top: {point.1}px; width: 8px; height: 8px; background: {path.color}; border-radius: 50%; transform: translate(-50%, -50%);",
+                            style: "position: absolute; left: {point.0}px; top: {point.1}px; width: 10px; height: 10px; background: {path.color}; border-radius: 50%; transform: translate(-50%, -50%); border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);",
                         }
                     }
                 }
@@ -410,7 +410,7 @@ if let Some(canvas_name) = selected_canvas.read().as_ref() {
         }
         div {
             class: "mt-2 text-xs text-gray-500",
-            "Click anywhere to draw dots. Use Clear to erase."
+            "Click anywhere to draw dots on the image. Use Clear to erase."
         }
     }
 }
