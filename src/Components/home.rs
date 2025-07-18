@@ -460,6 +460,8 @@ if let Some(canvas_name) = selected_canvas.read().as_ref() {
                         }
                     }
 
+                    //this is the image preview section
+
                     if let Some(image_path) = selected_image.read().as_ref() {
                         div {
                             class: "mb-4 bg-gray-100 p-4 rounded-lg",
@@ -505,3 +507,4 @@ if let Some(canvas_name) = selected_canvas.read().as_ref() {
         }
     }
 }
+
