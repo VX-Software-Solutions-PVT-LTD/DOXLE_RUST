@@ -1,17 +1,15 @@
 use dioxus::prelude::*;
 use crate::Components::file_types::{FileItem, FileType};
 use crate::Components::file_item::FileItemComponent;
-use crate::Components::footer::Footer;
 
-// Conditional imports based on target
-#[cfg(not(target_arch = "wasm32"))]
-use skia_safe::{Canvas as SkiaCanvas, Paint, Path, Color, Surface, EncodedImageFormat};
+// #[cfg(not(target_arch = "wasm32"))]
+// use skia_safe::{Canvas as SkiaCanvas, Paint, Path, Color, Surface, EncodedImageFormat};
 
-#[cfg(target_arch = "wasm32")]
-use wasm_bindgen::prelude::*;
+// #[cfg(target_arch = "wasm32")]
+// use wasm_bindgen::prelude::*;
 
-#[cfg(target_arch = "wasm32")]
-use web_sys::{HtmlCanvasElement, CanvasRenderingContext2d};
+// #[cfg(target_arch = "wasm32")]
+// use web_sys::{HtmlCanvasElement, CanvasRenderingContext2d};
 
 const PHOTO: Asset = asset!("/assets/Photo.svg");
 const FILE: Asset = asset!("/assets/File.svg");
@@ -41,9 +39,9 @@ pub fn Home() -> Element {
     let mut selected_image = use_signal(|| None::<String>);
     let mut selected_canvas = use_signal(|| None::<String>);
     
-    // Canvas drawing state
+    
     let mut drawing_paths = use_signal(|| Vec::<DrawingPath>::new());
-    let mut is_drawing = use_signal(|| false);
+    // let mut is_drawing = use_signal(|| false);
     let mut current_path = use_signal(|| Vec::<(f32, f32)>::new());
     let mut canvas_key = use_signal(|| 0u32);
 
@@ -61,89 +59,51 @@ pub fn Home() -> Element {
         FileItem::new(11, "My Drawing.canvas".to_string(), FileType::Canvas),
     ]);
 
-    // Skia-based drawing functions (for desktop)
-    #[cfg(not(target_arch = "wasm32"))]
-    let render_with_skia = move |paths: &Vec<DrawingPath>| -> Option<String> {
-        let mut surface = Surface::new_raster_n32_premul((350, 280))?;
-        let canvas = surface.canvas();
-        
-        // Clear background
-        canvas.clear(Color::WHITE);
-        
-        // Draw paths
-        for drawing_path in paths {
-            let mut paint = Paint::default();
-            paint.set_color(Color::from_argb(255, 16, 185, 129)); // Green color
-            paint.set_stroke_width(drawing_path.width);
-            paint.set_style(skia_safe::PaintStyle::Stroke);
-            paint.set_stroke_cap(skia_safe::PaintCap::Round);
-            paint.set_stroke_join(skia_safe::PaintJoin::Round);
-            
-            if drawing_path.points.len() > 1 {
-                let mut path = Path::new();
-                let first_point = drawing_path.points[0];
-                path.move_to((first_point.0, first_point.1));
-                
-                for point in &drawing_path.points[1..] {
-                    path.line_to((point.0, point.1));
-                }
-                
-                canvas.draw_path(&path, &paint);
-            }
-        }
-        
-        // Convert to base64 for web display
-        surface.image_snapshot()
-            .encode(None, EncodedImageFormat::PNG, None)
-            .map(|data| format!("data:image/png;base64,{}", base64::encode(data.as_bytes())))
-    };
 
-    // Drawing event handlers - Fixed coordinate handling
-let start_drawing = move |evt: Event<MouseData>| {
-    evt.stop_propagation();
-    is_drawing.set(true);
+    // Tried these  Drawing event handlers but not working
+// let start_drawing = move |evt: Event<MouseData>| {
+//     evt.stop_propagation();
+//     is_drawing.set(true);
+
+//     let coords = evt.element_coordinates();
+//     let x = coords.x as f32 * 350.0 / 100.0; // Scale to viewBox width
+//     let y = coords.y as f32 * 280.0 / 100.0; // Scale to viewBox height
     
-    // Get coordinates relative to the SVG viewBox
-    let coords = evt.element_coordinates();
-    let x = coords.x as f32 * 350.0 / 100.0; // Scale to viewBox width
-    let y = coords.y as f32 * 280.0 / 100.0; // Scale to viewBox height
-    
-    current_path.set(vec![(x, y)]);
-};
+//     current_path.set(vec![(x, y)]);
+// };
 
-let continue_drawing = move |evt: Event<MouseData>| {
-    if *is_drawing.read() {
-        evt.stop_propagation();
+// let continue_drawing = move |evt: Event<MouseData>| {
+//     if *is_drawing.read() {
+//         evt.stop_propagation();
         
-        // Get coordinates relative to the SVG viewBox
-        let coords = evt.element_coordinates();
-        let x = coords.x as f32 * 350.0 / 100.0;
-        let y = coords.y as f32 * 280.0 / 100.0;
+//         let coords = evt.element_coordinates();
+//         let x = coords.x as f32 * 350.0 / 100.0;
+//         let y = coords.y as f32 * 280.0 / 100.0;
         
-        let mut path = current_path.write();
-        path.push((x, y));
-    }
-};
+//         let mut path = current_path.write();
+//         path.push((x, y));
+//     }
+// };
 
-let stop_drawing = move |evt: Event<MouseData>| {
-    if *is_drawing.read() {
-        evt.stop_propagation();
-        is_drawing.set(false);
-        let path = current_path.read().clone();
-        if path.len() > 1 {
-            let drawing_path = DrawingPath {
-                points: path,
-                color: "#10B981".to_string(), // Green for completed paths
-                width: 3.0,
-            };
-            let mut paths = drawing_paths.write();
-            paths.push(drawing_path);
-            current_path.set(Vec::new());
-        }
-    }
-};
+// let stop_drawing = move |evt: Event<MouseData>| {
+//     if *is_drawing.read() {
+//         evt.stop_propagation();
+//         is_drawing.set(false);
+//         let path = current_path.read().clone();
+//         if path.len() > 1 {
+//             let drawing_path = DrawingPath {
+//                 points: path,
+//                 color: "#10B981".to_string(), // Green for completed paths
+//                 width: 3.0,
+//             };
+//             let mut paths = drawing_paths.write();
+//             paths.push(drawing_path);
+//             current_path.set(Vec::new());
+//         }
+//     }
+// };
 
-    // Rest of your existing functions (delete_item, open_folder, etc.)
+
     let delete_item = move |id: u32| {
         let mut items = file_items.write();
         if let Some(item) = items.iter().find(|item| item.id == id).cloned() {
@@ -191,7 +151,6 @@ let stop_drawing = move |evt: Event<MouseData>| {
             selected_video.set(None);
             selected_pdf.set(None);
             selected_image.set(None);
-            // Reset drawing state
             drawing_paths.set(Vec::new());
             current_path.set(Vec::new());
             canvas_key.set(canvas_key() + 1);
@@ -205,13 +164,13 @@ let stop_drawing = move |evt: Event<MouseData>| {
     };
 
     let save_canvas = move |_| {
-        // In a real app, you'd save the drawing_paths data here
+        
         selected_canvas.set(None);
         drawing_paths.set(Vec::new());
         current_path.set(Vec::new());
     };
 
-    // Filter items and other logic (same as before)
+    
     let filtered_items = file_items.read()
         .iter()
         .filter(|item| {
@@ -273,7 +232,7 @@ let stop_drawing = move |evt: Event<MouseData>| {
             div {
                 class: "max-w-md mx-auto bg-white min-h-screen",
                 
-                // Search bar
+
                 div {
                     class: "flex items-center bg-gray-100 rounded-full px-4 py-2",
                     img {
@@ -289,7 +248,7 @@ let stop_drawing = move |evt: Event<MouseData>| {
                     }
                 }
                 
-                // Header with buttons
+                
                 div {
                     class: "p-4 bg-white",
 
@@ -352,7 +311,7 @@ let stop_drawing = move |evt: Event<MouseData>| {
                 div {
                     class: "px-4",
 
-// Simple working canvas - replace the entire canvas interface
+
 if let Some(canvas_name) = selected_canvas.read().as_ref() {
     div {
         class: "mb-4 bg-gray-100 p-4 rounded-lg",
@@ -382,22 +341,22 @@ if let Some(canvas_name) = selected_canvas.read().as_ref() {
             class: "bg-white rounded-lg border-2 border-gray-300 p-4",
             style: "width: 100%; height: 300px;",
             
-            // Drawing area with image background
+            
             div {
                 style: "width: 100%; height: 100%; background-image: url('{IMAGE}'); background-size: cover; background-position: center; background-repeat: no-repeat; cursor: crosshair; border-radius: 8px; position: relative;",
                 onclick: move |evt: Event<MouseData>| {
-                    // Simple click drawing - add a dot where clicked
+                    
                     let coords = evt.element_coordinates();
                     let drawing_path = DrawingPath {
                         points: vec![(coords.x as f32, coords.y as f32), (coords.x as f32 + 1.0, coords.y as f32 + 1.0)],
-                        color: "#ff0000".to_string(), // Red dots for better visibility on image
+                        color: "#ff0000".to_string(), 
                         width: 10.0,
                     };
                     let mut paths = drawing_paths.write();
                     paths.push(drawing_path);
                 },
                 
-                // Show dots where user has clicked
+                
                 for (i, path) in drawing_paths.read().iter().enumerate() {
                     if let Some(point) = path.points.first() {
                         div {
@@ -415,7 +374,7 @@ if let Some(canvas_name) = selected_canvas.read().as_ref() {
     }
 }
                     
-                    // Video, PDF, and Image viewers (same as before)
+                    
                     if current_folder.read().is_none() {
                         if let Some(video_name) = selected_video.read().as_ref() {
                             div {
@@ -460,7 +419,7 @@ if let Some(canvas_name) = selected_canvas.read().as_ref() {
                         }
                     }
 
-                    //this is the image preview section
+                    
 
                     if let Some(image_path) = selected_image.read().as_ref() {
                         div {
@@ -482,7 +441,7 @@ if let Some(canvas_name) = selected_canvas.read().as_ref() {
                         }
                     }
 
-                    // File list
+                    
                     for item in filtered_items {
                         FileItemComponent {
                             item: item.clone(),
@@ -507,4 +466,3 @@ if let Some(canvas_name) = selected_canvas.read().as_ref() {
         }
     }
 }
-
