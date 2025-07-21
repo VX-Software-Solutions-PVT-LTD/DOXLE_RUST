@@ -37,8 +37,8 @@ pub fn Footer() -> Element {
                 // Plus
                 div { class: "flex flex-col items-center",
                     button {
-                        style: "width:57px;height:38px;background:#83ADFF;border-radius:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.10);padding:0;border:none;",
-                        img { src: "{PLUS}", style: "width:13.5px;height:13.5px;background:#83ADFF;" }
+                        style: "width:56px;height:32px;background:#83ADFF;border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.10);padding:0;border:none;margin-bottom:4px;",
+                        img { src: "{PLUS}", style: "width:16px;height:16px;" }
                     }
                 }
                 

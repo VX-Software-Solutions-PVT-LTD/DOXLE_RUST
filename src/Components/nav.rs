@@ -9,8 +9,8 @@ pub fn Nav() -> Element {
             class: "min-h-screen bg-gray-50",
 
             nav {
-                class: "bg-white text-black p-4 shadow-sm",
-                style: "position: fixed; top: 0; left: 0; right: 0; z-index: 40; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 21px; line-height: 100%; letter-spacing: 0%;",
+                class: "bg-white text-black p-4",
+                style: "position: fixed; top: 0; left: 0; right: 0; z-index: 40; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 600; font-size: 18px; line-height: 100%; letter-spacing: 0%; background-color: white; text-shadow: none; padding-top: 20px;",
                 div {
                     class: "max-w-md mx-auto",
                     "10 Riddle St, Bentleigh"

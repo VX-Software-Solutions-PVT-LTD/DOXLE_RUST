@@ -15,11 +15,12 @@ pub struct FileItem {
     pub file_type: FileType,
     pub parent_id: Option<u32>,
      pub children: Vec<u32>,
+pub data_url: Option<String>,
 }
 
 impl FileItem {
     pub fn new(id: u32, name: String, file_type: FileType) -> Self {
-        Self { id, name, file_type, parent_id: None, children: Vec::new() }
+        Self { id, name, file_type, parent_id: None, children: Vec::new(), data_url: None }
     }
     
 pub fn new_with_parent(id: u32, name: String, file_type: FileType, parent_id: u32) -> Self {
@@ -29,6 +30,7 @@ pub fn new_with_parent(id: u32, name: String, file_type: FileType, parent_id: u3
             file_type,
             parent_id: Some(parent_id),
             children: Vec::new(),
+            data_url: None,
         }
     }
 }

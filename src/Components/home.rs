@@ -38,6 +38,7 @@ pub fn Home() -> Element {
     let mut selected_pdf = use_signal(|| None::<String>);
     let mut selected_image = use_signal(|| None::<String>);
     let mut selected_canvas = use_signal(|| None::<String>);
+    let mut selected_file = use_signal(|| None::<String>);
     
     
     let mut drawing_paths = use_signal(|| Vec::<DrawingPath>::new());
@@ -54,9 +55,7 @@ pub fn Home() -> Element {
         FileItem::new_with_parent(6, "Folder Video.mp4".to_string(), FileType::Video, 3), 
         FileItem::new(7, "Root PDF.pdf".to_string(), FileType::PDF),
         FileItem::new_with_parent(8, "Temp PDF.pdf".to_string(), FileType::PDF, 3),
-        FileItem::new(9, "random.svg".to_string(), FileType::Photo),
         FileItem::new_with_parent(10, "random.svg".to_string(), FileType::Photo, 3),
-        FileItem::new(11, "My Drawing.canvas".to_string(), FileType::Canvas),
     ]);
 
 
@@ -128,6 +127,8 @@ pub fn Home() -> Element {
         selected_video.set(None);
         selected_pdf.set(None);
         selected_canvas.set(None);
+        selected_image.set(None);
+        selected_file.set(None);
     };
 
     let play_video = move |name: String| {
@@ -135,6 +136,8 @@ pub fn Home() -> Element {
         selected_video.set(Some(name));
         selected_pdf.set(None);
         selected_canvas.set(None);
+        selected_image.set(None);
+        selected_file.set(None);
     };
 
     let open_pdf = move |name: String| {
@@ -142,6 +145,8 @@ pub fn Home() -> Element {
             selected_pdf.set(Some(name));
             selected_video.set(None);
             selected_canvas.set(None);
+            selected_image.set(None);
+            selected_file.set(None);
         }
     };
 
@@ -151,9 +156,20 @@ pub fn Home() -> Element {
             selected_video.set(None);
             selected_pdf.set(None);
             selected_image.set(None);
+            selected_file.set(None);
             drawing_paths.set(Vec::new());
             current_path.set(Vec::new());
             canvas_key.set(canvas_key() + 1);
+        }
+    };
+
+    let open_file = move |name: String| {
+        if current_folder.read().is_none() {
+            selected_file.set(Some(name));
+            selected_video.set(None);
+            selected_pdf.set(None);
+            selected_canvas.set(None);
+            selected_image.set(None);
         }
     };
 
@@ -198,19 +214,22 @@ pub fn Home() -> Element {
         items.push(FileItem::new(new_id, format!("New Photo {}", new_id), FileType::Photo));
     };
 
-    let preview_image = move |name: String| {
+    let preview_image = move |item: FileItem| {
         if current_folder.read().is_none() {
-            selected_image.set(Some(format!("/assets/{}", name)));
+            selected_image.set(Some(item.name.clone()));
             selected_video.set(None);
             selected_pdf.set(None);
             selected_canvas.set(None);
+            drawing_paths.set(Vec::new()); // Clear drawing paths for new image
+            current_path.set(Vec::new());
+            canvas_key.set(canvas_key() + 1);
         }
     };
 
     let add_file = move |_:Event<MouseData>| {
         let mut items = file_items.write();
         let new_id = items.iter().map(|i| i.id).max().unwrap_or(0) + 1;
-        items.push(FileItem::new(new_id, format!("New File {}", new_id), FileType::File));
+        items.push(FileItem::new(new_id, format!("Document {}.txt", new_id), FileType::File));
     };
 
     let add_folder = move |_:Event<MouseData>| {
@@ -227,89 +246,84 @@ pub fn Home() -> Element {
 
     rsx! {
         div {
-            class: "min-h-screen bg-gray-50",
-            style: "padding-top: 72px;",
+            class: "min-h-screen bg-white overflow-y-auto",
+            style: "padding-top: 40px;",
             div {
-                class: "max-w-md mx-auto bg-white min-h-screen",
+                class: "max-w-md mx-auto bg-white",
                 
 
                 div {
-                    class: "flex items-center bg-gray-100 rounded-full px-4 py-2",
-                    img {
-                        src: "{SEARCH_ICON}",
-                        class: "w-5 h-5 mr-2",
+                    class: "p-4 bg-white sticky top-20 z-10 border-b border-gray-100",
+                    
+                    div {
+                        class: "flex items-center bg-gray-100 rounded-full px-4 py-2 mb-4",
+                        img {
+                            src: "{SEARCH_ICON}",
+                            class: "w-4 h-4 mr-3",
+                        }
+                        input {
+                            r#type: "text",
+                            class: "bg-transparent outline-none flex-1 text-gray-600 text-sm",
+                            placeholder: "Search for files",
+                            value: "{search_query.read()}",
+                            oninput: move |evt| search_query.set(evt.value()),
+                        }
                     }
-                    input {
-                        r#type: "text",
-                        class: "bg-transparent outline-none flex-1 text-gray-700",
-                        placeholder: " Search for files",
-                        value: "{search_query.read()}",
-                        oninput: move |evt| search_query.set(evt.value()),
+                    
+                    div {
+                        class: "flex space-x-3 mt-3",
+                        // Photo button
+                        button {
+                            class: "w-16 h-8 bg-gray-100 border border-gray-300 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-colors shadow-sm",
+                            onclick: add_photo,
+                            img {
+                                src: "{PHOTO}",
+                                class: "w-10 h-10",
+                            }
+                        }
+                        // File button
+                        button {
+                            class: "w-16 h-8 bg-gray-100 border border-gray-300 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-colors shadow-sm",
+                            onclick: add_file,
+                            img {
+                                src: "{FILE}",
+                                class: "w-10 h-10",
+                            }
+                        }
+                        // Folder button
+                        button {
+                            class: "w-16 h-8 bg-gray-100 border border-gray-300 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-colors shadow-sm",
+                            onclick: add_folder,
+                            img {
+                                src: "{FOLDER}",
+                                class: "w-10 h-10",
+                            }
+                        }
                     }
-                }
-                
-                
-                div {
-                    class: "p-4 bg-white",
 
                     if let Some(folder_name) = current_folder_name {
                         div {
-                            class: "mb-4",
+                            class: "mt-4",
                             button {
-                                class: "",
+                                class: "flex items-center text-blue-600 hover:text-blue-800 mb-2",
                                 onclick: move |_| {
                                     current_folder.set(None);
                                     selected_video.set(None);
                                     selected_pdf.set(None);
                                     selected_canvas.set(None);
+                                    selected_image.set(None);
+                                    selected_file.set(None);
                                 },
                                 "← Back to Root"
                             }
-                            h2 { class: "text-lg font-semibold mt-2", "Folder: {folder_name}" }
-                        }
-                    }
-
-                    if current_folder.read().is_none() {
-                        div {
-                            class: "flex space-x-4 mb-6",
-                            button {
-                                style: "width:79px;height:36px;border-radius:4px;border-width:1px;background:#F2F3FE;border:1px solid #EAECEF;opacity:1;display:flex;align-items:center;justify-content:center;",
-                                onclick: add_photo,
-                                img {
-                                    src: "{PHOTO}",
-                                    style: "width:39px;height:17px;border-radius:1px;opacity:1;",
-                                }
-                            }
-                            button {
-                                style: "width:79px;height:36px;border-radius:4px;border-width:1px;background:#F2F3FE;border:1px solid #EAECEF;opacity:1;display:flex;align-items:center;justify-content:center;",
-                                onclick: add_file,
-                                img {
-                                    src: "{FILE}",
-                                    style: "width:39px;height:17px;border-radius:1px;opacity:1;",
-                                }
-                            }
-                            button {
-                                style: "width:79px;height:36px;border-radius:4px;border-width:1px;background:#F2F3FE;border:1px solid #EAECEF;opacity:1;display:flex;align-items:center;justify-content:center;",
-                                onclick: add_folder,
-                                img {
-                                    src: "{FOLDER}",
-                                    style: "width:39px;height:17px;border-radius:1px;opacity:1;",
-                                }
-                            }
-                            button {
-                                style: "width:79px;height:36px;border-radius:4px;border-width:1px;background:#F2F3FE;border:1px solid #EAECEF;opacity:1;display:flex;align-items:center;justify-content:center;",
-                                onclick: add_canvas,
-                                img {
-                                    src: "{CANVAS}",
-                                    style: "width:39px;height:17px;border-radius:1px;opacity:1;",
-                                }
-                            }
+                            h2 { class: "text-lg font-semibold", "Folder: {folder_name}" }
                         }
                     }
                 }
 
                 div {
-                    class: "px-4",
+                    class: "px-4 pb-20",
+                    style: "max-height: calc(100vh - 200px); overflow-y: auto;",
 
 
 if let Some(canvas_name) = selected_canvas.read().as_ref() {
@@ -421,27 +435,102 @@ if let Some(canvas_name) = selected_canvas.read().as_ref() {
 
                     
 
-                    if let Some(image_path) = selected_image.read().as_ref() {
+                    if let Some(image_name) = selected_image.read().as_ref() {
                         div {
                             class: "mb-4 bg-gray-100 p-4 rounded-lg",
                             div {
                                 class: "flex justify-between items-center mb-2",
-                                h3 { class: "text-md font-semibold", "Previewing: {image_path}" }
-                                button {
-                                    class: "text-red-500 hover:text-red-700",
-                                    onclick: move |_| selected_image.set(None),
-                                    "✕ Close"
+                                h3 { class: "text-md font-semibold", "Drawing on: {image_name}" }
+                                div {
+                                    class: "flex space-x-2",
+                                    button {
+                                        class: "bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600",
+                                        onclick: clear_canvas,
+                                        "Clear"
+                                    }
+                                    button {
+                                        class: "bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600",
+                                        onclick: move |_| {
+                                            selected_image.set(None);
+                                            drawing_paths.set(Vec::new());
+                                            current_path.set(Vec::new());
+                                        },
+                                        "Save"
+                                    }
+                                    button {
+                                        class: "text-red-500 hover:text-red-700 px-2",
+                                        onclick: move |_| {
+                                            selected_image.set(None);
+                                            drawing_paths.set(Vec::new());
+                                            current_path.set(Vec::new());
+                                        },
+                                        "✕ Close"
+                                    }
                                 }
                             }
-                            img {
-                                src: "{IMAGE}",
-                                class: "w-full rounded-lg",
-                                alt: "{IMAGE}",
+                            div {
+                                class: "bg-white rounded-lg border-2 border-gray-300 p-4",
+                                style: "width: 100%; height: 300px;",
+                                
+                                div {
+                                    style: "width: 100%; height: 100%; background-image: url('{IMAGE}'); background-size: cover; background-position: center; background-repeat: no-repeat; cursor: crosshair; border-radius: 8px; position: relative;",
+                                    onclick: move |evt: Event<MouseData>| {
+                                        let coords = evt.element_coordinates();
+                                        let drawing_path = DrawingPath {
+                                            points: vec![(coords.x as f32, coords.y as f32), (coords.x as f32 + 1.0, coords.y as f32 + 1.0)],
+                                            color: "#ff0000".to_string(), 
+                                            width: 10.0,
+                                        };
+                                        let mut paths = drawing_paths.write();
+                                        paths.push(drawing_path);
+                                    },
+                                    
+                                    for (i, path) in drawing_paths.read().iter().enumerate() {
+                                        if let Some(point) = path.points.first() {
+                                            div {
+                                                key: "{i}",
+                                                style: "position: absolute; left: {point.0}px; top: {point.1}px; width: 10px; height: 10px; background: {path.color}; border-radius: 50%; transform: translate(-50%, -50%); border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);",
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            div {
+                                class: "mt-2 text-xs text-gray-500",
+                                "Click anywhere to draw red dots on the image. Use Clear to erase all dots."
                             }
                         }
                     }
 
                     
+                    if let Some(file_name) = selected_file.read().as_ref() {
+                        div {
+                            class: "mb-4 bg-gray-100 p-4 rounded-lg",
+                            div {
+                                class: "flex justify-between items-center mb-2",
+                                h3 { class: "text-md font-semibold", "Editing: {file_name}" }
+                                button {
+                                    class: "text-red-500 hover:text-red-700 px-2",
+                                    onclick: move |_| selected_file.set(None),
+                                    "✕ Close"
+                                }
+                            }
+                            div {
+                                class: "bg-white rounded-lg border-2 border-gray-300 p-4",
+                                style: "width: 100%; height: 300px;",
+                                textarea {
+                                    class: "w-full h-full resize-none outline-none text-sm",
+                                    placeholder: "Type your content here...",
+                                    "This is a dummy text file. You can edit this content."
+                                }
+                            }
+                            div {
+                                class: "mt-2 text-xs text-gray-500",
+                                "Edit your document here. Changes are saved automatically."
+                            }
+                        }
+                    }
+
                     for item in filtered_items {
                         FileItemComponent {
                             item: item.clone(),
@@ -451,6 +540,7 @@ if let Some(canvas_name) = selected_canvas.read().as_ref() {
                             on_pdf_click: open_pdf,
                             on_image_click: preview_image,
                             on_canvas_click: open_canvas,
+                            on_file_click: open_file,
                             icon: match item.file_type {
                                 FileType::Photo => PHOTO,
                                 FileType::File => FILE,
