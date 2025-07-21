@@ -42,7 +42,7 @@ pub fn FileItemComponent(
                 }
                 div {
                     span {
-                        class: "text-sm text-gray-600",
+                        class: "text-sm text-gray-800 font-semibold",
                         "{item.name}"
                     }
                 }

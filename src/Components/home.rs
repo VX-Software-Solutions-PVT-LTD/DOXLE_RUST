@@ -253,7 +253,7 @@ pub fn Home() -> Element {
                 
 
                 div {
-                    class: "p-4 bg-white sticky top-20 z-10 border-b border-gray-100",
+                    class: "p-4 bg-white sticky top-20 z-10 border-b border-gray-100 ",
                     
                     div {
                         class: "flex items-center bg-gray-100 rounded-full px-4 py-2 mb-4",
@@ -264,7 +264,7 @@ pub fn Home() -> Element {
                         input {
                             r#type: "text",
                             class: "bg-transparent outline-none flex-1 text-gray-600 text-sm",
-                            placeholder: "Search for files",
+                            placeholder: "   Search for files",
                             value: "{search_query.read()}",
                             oninput: move |evt| search_query.set(evt.value()),
                         }
