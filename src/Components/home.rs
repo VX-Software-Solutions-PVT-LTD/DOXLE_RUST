@@ -270,37 +270,62 @@ pub fn Home() -> Element {
                         }
                     }
                     
-                    div {
-                        class: "flex space-x-3 mt-3",
-                        // Photo button
-                        button {
-                            class: "w-16 h-8 bg-gray-100 border border-gray-300 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-colors shadow-sm",
-                            onclick: add_photo,
-                            img {
-                                src: "{PHOTO}",
-                                class: "w-10 h-10",
-                            }
-                        }
-                        // File button
-                        button {
-                            class: "w-16 h-8 bg-gray-100 border border-gray-300 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-colors shadow-sm",
-                            onclick: add_file,
-                            img {
-                                src: "{FILE}",
-                                class: "w-10 h-10",
-                            }
-                        }
-                        // Folder button
-                        button {
-                            class: "w-16 h-8 bg-gray-100 border border-gray-300 rounded-xl flex items-center justify-center hover:bg-gray-200 transition-colors shadow-sm",
-                            onclick: add_folder,
-                            img {
-                                src: "{FOLDER}",
-                                class: "w-10 h-10",
-                            }
-                        }
-                    }
+                  
+    div {
+    style: "display: flex; gap: 12px; margin-top: 12px; margin-bottom: 20px;",
 
+    // Photo Button
+    button {
+        onclick: add_photo,
+        style: "width: 95px; height: 36px; border-radius: 4px; border: 1px solid #EAECEF; background: rgba(236, 239, 253, 0.6); display: flex; align-items: center; justify-content: center;",
+        img {
+            src: "{PHOTO}",
+            style: "width: 60;
+height: 17;
+top: 141px;
+left: 54px;
+angle: 0 deg;
+opacity: 1;
+",
+        }
+        
+    }
+
+    // File Button
+    button {
+        onclick: add_file,
+        style: "width: 79px; height: 36px; border-radius: 4px; border: 1px solid #EAECEF; background: #F2F3FE; display: flex; align-items: center; justify-content: center;",
+        img {
+            src: "{FILE}",
+            style: "width: 39;
+height: 17;
+top: 141px;
+left: 157px;
+border-radius: 1px;
+angle: 0 deg;
+opacity: 1;
+",
+        }
+        
+    }
+
+    // Folder Button
+    button {
+        onclick: add_folder,
+        style: "width: 95px; height: 36px; border-radius: 4px; border: 1px solid #EAECEF; background: #F2F3FE; display: flex; align-items: center; justify-content: center;",
+        img {
+            src: "{FOLDER}",
+            style: "width: 62;
+height: 17;
+top: 141px;
+left: 235px;
+angle: 0 deg;
+opacity: 1;
+",
+        }
+        
+    }
+}
                     if let Some(folder_name) = current_folder_name {
                         div {
                             class: "mt-4",
